@@ -9,4 +9,5 @@ export default {
   auth_token_expire : process.env.ACCESS_TOKEN_EXPIRES_IN,
   refresh_token : process.env.REFRESH_TOKEN,
   refresh_token_expire : process.env.REFRESH_TOKEN_EXPIRES_IN,
+  env : process.env.env,
 }
