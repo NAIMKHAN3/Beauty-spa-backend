@@ -9,5 +9,6 @@ const router = Router();
 router.use('/auth', userRouter);
 router.use('/category', categoryRouter);
 router.use('/file', uploadRouter);
+router.use('/product', uploadRouter);
 
 export default router;
