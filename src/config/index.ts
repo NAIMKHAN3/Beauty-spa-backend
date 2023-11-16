@@ -10,4 +10,7 @@ export default {
   refresh_token : process.env.REFRESH_TOKEN,
   refresh_token_expire : process.env.REFRESH_TOKEN_EXPIRES_IN,
   env : process.env.env,
+  cloude_name: process.env.CLOUD_NAME,
+  cloude_api_key: process.env.CLOUD_API_KEY,
+  cloude_secret_key: process.env.CLOUD_SECRET_KEY,
 }
