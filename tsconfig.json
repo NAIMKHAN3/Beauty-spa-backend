@@ -1,4 +1,5 @@
 {
+  "files": ["express.d.ts"],
   "include": ["src"], // which files to compile
   "exclude": ["node_modules"], // which files to skip
   "compilerOptions": {

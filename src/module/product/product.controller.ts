@@ -17,7 +17,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await Product.find();
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "Product get success",
             data: result
@@ -31,7 +31,7 @@ export const getProductById = async (req: Request, res: Response, next: NextFunc
     try {
         const {id} = req.params;
         const result = await Product.findById(id);
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "Product get success",
             data: result
