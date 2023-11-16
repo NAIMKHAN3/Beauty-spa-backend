@@ -14,3 +14,30 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
         next(err)
     }
 }
+export const getProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await Product.find();
+        res.status(201).send({
+            success: true,
+            message: "Product get success",
+            data: result
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
+export const getProductById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.params;
+        const result = await Product.findById(id);
+        res.status(201).send({
+            success: true,
+            message: "Product get success",
+            data: result
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
