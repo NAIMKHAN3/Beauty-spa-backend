@@ -14,3 +14,16 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
         next(err)
     }
 }
+export const getCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await Category.find();
+        res.status(200).send({
+            success: true,
+            message: "Category get success",
+            data: result
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
