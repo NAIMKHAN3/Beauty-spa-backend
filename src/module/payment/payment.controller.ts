@@ -18,10 +18,9 @@ const stripeInstance = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" })
 export const createPayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { cart } = req.body;
-        const { email,_id } = req.user;
+        const { email, _id } = req.user;
         const cartInfo = await Cart.findById(cart).populate("user product")
         const findProduct = await Product.findById(cartInfo?.product)
-
         if (!findProduct || !cartInfo) {
             return res.status(400).send({
                 success: false,
@@ -29,7 +28,7 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             })
         }
 
-        const amount = cartInfo?.price as number * 100;
+        const amount = findProduct?.price as number * 100;
         const product = await stripeInstance.products.create({
             name: findProduct.name
         })
@@ -57,17 +56,24 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             customer: customerId,
             line_items: [{
                 price: price.id,
-                quantity: cartInfo.quantity
+                quantity: cartInfo.quantity,
             }],
             success_url: "http://localhost:3000/payment/success",
             cancel_url: "http://localhost:3000/payment/failed"
         })
-        const paymentInfo:IPayment = {
-            user: _id,
-            sessionId: session.id,
-            cart,
+        const findCart = await Payment.findOne({ cart })
+        if (findCart) {
+            findCart.sessionId = session.id;
+            await findCart.save();
+        } else {
+            const paymentInfo: IPayment = {
+                user: _id,
+                sessionId: session.id,
+                cart,
+            }
+            const result = await Payment.create(paymentInfo)
         }
-        const result = await Payment.create(paymentInfo)
+
         res.status(200).send({
             status: true,
             sessionId: session
@@ -77,3 +83,33 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
         next(err)
     }
 }
+
+
+
+export const webhook = async (req: Request, res: Response) => {
+    const endpointSecret = config.stripe_endpoint_key;
+    let data;
+    let evenType;
+    if (endpointSecret) {
+        try {
+            data = req.body.data.object;
+            evenType = req.body.type;
+            const findPaymentInfo = await Payment.findOne({ sessionId: data.id })
+            if (evenType === 'checkout.session.completed') {
+                if (data.payment_status === 'paid' && findPaymentInfo) {
+                    findPaymentInfo.paymentStatus = "SUCCESS";
+                await findPaymentInfo.save();
+                }
+            } else {
+                if (findPaymentInfo) {
+                    findPaymentInfo.paymentStatus = "FAILED"
+                   await findPaymentInfo.save();
+                }
+            }
+        } catch (err) {
+            console.log("weebhook error", err);
+            res.status(400).send({ status: false, WebhookError: `${err}` });
+            return;
+        }
+    }
+};

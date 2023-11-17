@@ -13,5 +13,6 @@ export default {
   cloude_name: process.env.CLOUD_NAME,
   cloude_api_key: process.env.CLOUD_API_KEY,
   cloude_secret_key: process.env.CLOUD_SECRET_KEY,
-  stripe_secret_key: process.env.STRIPE_SECRET_KEY
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  stripe_endpoint_key: process.env.STRIPE_ENDPOINT_KEY,
 }

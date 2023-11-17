@@ -15,11 +15,13 @@ export const verifyJwt = async (
 
     if (!token) return next(createError.Unauthorized("Access denied"));
     try {
-        const verified = jwt.verify(token, process.env.AUTH_TOKEN || "");
+        const verified = jwt.verify(token, process.env.ACCESS_TOKEN || "");
         req.user = verified;
         next();
     } catch (error) {
-        
-      return  res.redirect("http://localhost:3000/login")
+        next(error)
+    //   return 
+
+    //    res.redirect("http://localhost:3000/login")
     }
 };

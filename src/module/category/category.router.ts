@@ -6,6 +6,6 @@ import { verifyJwt } from "../../middleware/verifyJwt";
 const router = Router();
 
 router.post('/create-category', verifyCategory, createCategory)
-router.get('/get-category', verifyJwt,  getCategory)
+router.get('/get-category',  getCategory)
 
 export default router;

@@ -20,6 +20,7 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
         res.status(200).send({
             success: true,
             message: "Product get success",
+            len: result.length,
             data: result
         })
     }
