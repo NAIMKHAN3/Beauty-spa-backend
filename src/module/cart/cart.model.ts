@@ -5,10 +5,12 @@ const cartSchema = new Schema<ICart>({
     user: {
         type: Schema.Types.ObjectId,
         required: true,
+        ref: "User"
     },
     product: {
         type: Schema.Types.ObjectId,
         required: true,
+        ref: "Product"
     },
     quantity: {
         type: Number,
@@ -18,6 +20,6 @@ const cartSchema = new Schema<ICart>({
         type: Number,
         required: true,
     },
-})
+},{timestamps: true})
 
 export const Cart = model<ICart>('Cart', cartSchema)
