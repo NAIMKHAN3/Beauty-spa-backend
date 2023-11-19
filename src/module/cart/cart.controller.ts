@@ -22,7 +22,7 @@ export const createCart = async (req: Request, res: Response, next: NextFunction
                     quantity: req.body.quantity,
                     price: product.price * req.body.quantity
                 }],
-                totalPrice: product.price * req.body.quantity
+                totalPrice: Number((product.price * req.body.quantity).toFixed(2))
             }
 
             const result = await Cart.create(newProduct)
@@ -33,8 +33,8 @@ export const createCart = async (req: Request, res: Response, next: NextFunction
                 price: product.price * req.body.quantity
             }
             cart.product.push(updateProduct),
-                cart.totalPrice = cart.totalPrice + product.price * req.body.quantity;
-                await cart.save()
+                cart.totalPrice = Number((cart.totalPrice + (product.price * req.body.quantity)).toFixed(2));
+            await cart.save()
         }
 
 
@@ -49,11 +49,11 @@ export const createCart = async (req: Request, res: Response, next: NextFunction
 }
 export const getCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
-    const {_id} = req.user;
-        const cart = await Cart.findOne({ user: _id, status: "PENDING" }) .populate({
+        const { _id } = req.user;
+        const cart = await Cart.findOne({ user: _id, status: "PENDING" }).populate({
             path: 'product.product',
         })
-     
+
 
 
         res.status(200).send({
@@ -61,6 +61,37 @@ export const getCart = async (req: Request, res: Response, next: NextFunction) =
             message: "Cart get Success",
             product: cart?.product.length || 0,
             data: cart
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
+export const removeProduct = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.user;
+        const { cart, product } = req.body
+        const result = await Cart.findOne({ _id: cart, status: "PENDING" })
+
+        if (!result) {
+            return res.status(400).send({
+                success: false,
+                message: "Cart not found",
+            })
+        }
+        const filterProduct = result.product.filter(item => item.product.toString() !== product)
+        const findProduct = result.product.find(item => item.product.toString() === product)
+        if (findProduct && filterProduct) {
+            result.product = filterProduct;
+            result.totalPrice = Number((result.totalPrice - findProduct.price).toFixed(2))
+            await result.save()
+        }
+
+
+
+        res.status(200).send({
+            success: true,
+            message: "Cart remove Product Success",
         })
     }
     catch (err) {

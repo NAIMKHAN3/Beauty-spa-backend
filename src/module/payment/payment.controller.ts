@@ -27,7 +27,7 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             })
         }
 
-        const amount = cartInfo?.totalPrice as number * 100;
+        const amount = Number((cartInfo?.totalPrice as number * 100).toFixed(2));
         const product = await stripeInstance.products.create({
             name: "Beauty Spa Product"
         })
@@ -76,7 +76,7 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
         await cartInfo.save();
 
         res.status(200).send({
-            status: true,
+            success: true,
             sessionId: session
         })
     }
