@@ -19,18 +19,17 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
     try {
         const { cart } = req.body;
         const { email, _id } = req.user;
-        const cartInfo = await Cart.findById(cart).populate("user product")
-        const findProduct = await Product.findById(cartInfo?.product)
-        if (!findProduct || !cartInfo) {
+        const cartInfo = await Cart.findById(cart)
+        if (!cartInfo) {
             return res.status(400).send({
                 success: false,
                 message: "Product not found"
             })
         }
 
-        const amount = findProduct?.price as number * 100;
+        const amount = cartInfo?.totalPrice as number * 100;
         const product = await stripeInstance.products.create({
-            name: findProduct.name
+            name: "Beauty Spa Product"
         })
         const price = await stripeInstance.prices.create({
             unit_amount: amount,
@@ -56,7 +55,7 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             customer: customerId,
             line_items: [{
                 price: price.id,
-                quantity: cartInfo.quantity,
+                quantity: 1,
             }],
             success_url: "http://localhost:3000/payment/success",
             cancel_url: "http://localhost:3000/payment/failed"
@@ -73,6 +72,8 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             }
             const result = await Payment.create(paymentInfo)
         }
+        cartInfo.status ="ACCEPT";
+        await cartInfo.save();
 
         res.status(200).send({
             status: true,

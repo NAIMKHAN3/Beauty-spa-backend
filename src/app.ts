@@ -5,7 +5,7 @@ import errorHandler, { notfoundandler } from './middleware/errorHandler'
 
 const app: Application = express()
 
-app.use(cors())
+app.use(cors({origin: "http://localhost:3000", credentials: true}))
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {

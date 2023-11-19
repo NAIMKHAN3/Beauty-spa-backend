@@ -8,18 +8,32 @@ const cartSchema = new Schema<ICart>({
         ref: "User"
     },
     product: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "Product"
+        type: [{
+            product: {
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: "Product"
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+        }]
     },
-    quantity: {
+    totalPrice: {
         type: Number,
         required: true,
     },
-    price: {
-        type: Number,
+    status: {
+        type: String,
         required: true,
-    },
-},{timestamps: true})
+        enum: ["PENDING", "ACCEPT"],
+        default: "PENDING"
+    }
+}, { timestamps: true })
 
 export const Cart = model<ICart>('Cart', cartSchema)
