@@ -2,6 +2,10 @@ import { Schema, model } from "mongoose";
 import { IPayment } from "./payment.interface";
 
 const paymentSchema = new Schema<IPayment>({
+    orderNumber:{
+        type: String,
+        required: true
+    },
     user: {
         type: Schema.Types.ObjectId,
         required: true,

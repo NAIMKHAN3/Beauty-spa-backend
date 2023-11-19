@@ -20,6 +20,8 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
         const { cart } = req.body;
         const { email, _id } = req.user;
         const cartInfo = await Cart.findById(cart)
+        const count = await Cart.count();
+        const orderNumber = `ORD2023${count + 1}`
         if (!cartInfo) {
             return res.status(400).send({
                 success: false,
@@ -66,13 +68,14 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
             await findCart.save();
         } else {
             const paymentInfo: IPayment = {
+                orderNumber,
                 user: _id,
                 sessionId: session.id,
                 cart,
             }
             const result = await Payment.create(paymentInfo)
         }
-        cartInfo.status ="ACCEPT";
+        cartInfo.status = "ACCEPT";
         await cartInfo.save();
 
         res.status(200).send({
@@ -99,12 +102,12 @@ export const webhook = async (req: Request, res: Response) => {
             if (evenType === 'checkout.session.completed') {
                 if (data.payment_status === 'paid' && findPaymentInfo) {
                     findPaymentInfo.paymentStatus = "SUCCESS";
-                await findPaymentInfo.save();
+                    await findPaymentInfo.save();
                 }
             } else {
                 if (findPaymentInfo) {
                     findPaymentInfo.paymentStatus = "FAILED"
-                   await findPaymentInfo.save();
+                    await findPaymentInfo.save();
                 }
             }
         } catch (err) {
@@ -114,3 +117,39 @@ export const webhook = async (req: Request, res: Response) => {
         }
     }
 };
+
+
+export const getMyOrderNumber = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.user;
+        const orderNumber = await Payment.find({ user: _id }).select("orderNumber")
+        res.status(200).send({
+            success: true,
+            message: "Order Get Success",
+             data: orderNumber
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+export const getOrderByNumber = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { order } = req.params;
+        const result = await Payment.findOne({orderNumber:order}).populate({
+            path: 'cart',
+            model:'Cart',
+            populate: {
+                path: 'product.product',
+                model: 'Product',
+            },
+        })
+            .exec();
+            res.status(200).send({
+                success: true,
+                message: "Order Get Success",
+                 data: result
+            })
+    } catch (err) {
+        next(err)
+    }
+}

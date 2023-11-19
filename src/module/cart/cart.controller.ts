@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Product } from "../product/product.model";
 import { Cart } from "./cart.model";
 import { ICart } from "./cart.interface";
+import { Payment } from "../payment/payment.model";
 
 export const createCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
