@@ -7,8 +7,7 @@ const cartSchema = new Schema<ICart>({
         required: true,
         ref: "User"
     },
-    product: {
-        type: [{
+    product: [{
             product: {
                 type: Schema.Types.ObjectId,
                 required: true,
@@ -22,8 +21,7 @@ const cartSchema = new Schema<ICart>({
                 type: Number,
                 required: true
             },
-        }]
-    },
+        }],
     totalPrice: {
         type: Number,
         required: true,

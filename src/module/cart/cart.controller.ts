@@ -5,7 +5,6 @@ import { ICart } from "./cart.interface";
 
 export const createCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await Cart.deleteMany({})
         const product = await Product.findById(req.body.product)
         if (!product) {
             return res.status(404).send({
@@ -34,13 +33,34 @@ export const createCart = async (req: Request, res: Response, next: NextFunction
                 price: product.price * req.body.quantity
             }
             cart.product.push(updateProduct),
-                cart.totalPrice = cart.totalPrice + product.price * req.body.quantity
+                cart.totalPrice = cart.totalPrice + product.price * req.body.quantity;
+                await cart.save()
         }
 
 
         res.status(201).send({
             success: true,
             message: "Cart Added Success"
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+}
+export const getCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+    const {_id} = req.user;
+        const cart = await Cart.findOne({ user: _id, status: "PENDING" }) .populate({
+            path: 'product.product',
+        })
+     
+
+
+        res.status(200).send({
+            success: true,
+            message: "Cart get Success",
+            product: cart?.product.length || 0,
+            data: cart
         })
     }
     catch (err) {
