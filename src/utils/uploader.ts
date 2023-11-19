@@ -27,7 +27,7 @@ const uploader = ({
     cloudinary: cloudinary,
     params: {
       folder: 'uploads', // Change this to your desired folder name
-      allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
       transformation: [{ width: 500, height: 500, crop: 'limit' }],
     } as any, // Use an assertion here
   });

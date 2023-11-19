@@ -7,7 +7,7 @@ const fileUploadMiddleware = (
   next: NextFunction
 ) => {
   const multerUploader = uploader({
-    allowedFileTypes: ["image/jpeg", "image/png", "image/jpg"],
+    allowedFileTypes: ["image/jpeg", "image/png", "image/jpg", "image/webp"],
     errorMessage: "Only .jpg, .jpeg and .png format allowed!",
     maxFileSize: 1024 * 1024 * 5, // 5MB
   });

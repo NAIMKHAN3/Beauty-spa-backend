@@ -59,8 +59,8 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
                 price: price.id,
                 quantity: 1,
             }],
-            success_url: "http://localhost:3000/payment/success",
-            cancel_url: "http://localhost:3000/payment/failed"
+            success_url: "https://beauty-spa-client.vercel.app/payment/success",
+            cancel_url: "https://beauty-spa-client.vercel.app/payment/failed"
         })
         const findCart = await Payment.findOne({ cart })
         if (findCart) {
